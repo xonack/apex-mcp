@@ -21,7 +21,7 @@ Supported platforms:
 
 Create `.env` file:
 ```.env
-APEX_BEARER_TOKEN=<Your-Apex-Token
+APEX_BEARER_TOKEN=<Your-Apex-Token>
 APEX_API_URL=<Apex-API-Url>
 ```
 
