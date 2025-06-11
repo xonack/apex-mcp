@@ -25,6 +25,8 @@ APEX_BEARER_TOKEN=<Your-Apex-Token>
 APEX_API_URL=<Apex-API-Url>
 ```
 
+Run commands:
+
 ```bash
 # Install dependencies
 npm install
