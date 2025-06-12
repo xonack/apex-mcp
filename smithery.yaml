@@ -1,0 +1,23 @@
+runtime: "container"
+build:
+  dockerfile: "Dockerfile"           # Path to your Dockerfile
+  dockerBuildPath: "."               # Docker build context
+startCommand:
+  type: "http"
+  configSchema:                      # JSON Schema for configuration
+    type: "object"
+    properties:
+      bearerToken:
+        type: "string"
+        title: "Apex Bearer Token"
+        description: "Enter your Apex Bearer Token"
+      apiUrl:
+        type: "string"
+        title: "Apex API URL"
+        description: "Enter your Apex API URL. Defaults to beta."
+        default: "https://apex-backend-beta-435707161213.us-west1.run.app"
+    required: ["bearerToken"]
+  exampleConfig:
+    bearerToken: "example123"
+    apiUrl: "https://apex-backend-beta-435707161213.us-west1.run.app"
+  
