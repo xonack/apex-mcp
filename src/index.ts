@@ -2,18 +2,73 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
+// Environment variable validation
+const requiredEnvVars = ["APEX_BEARER_TOKEN", "APEX_API_URL"] as const;
+
+function validateEnvironment() {
+  const missing = requiredEnvVars.filter(envVar => !process.env[envVar]);
+  if (missing.length > 0) {
+    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
+  }
+}
+
+// Parse and validate command line arguments
 const args = process.argv.slice(2);
 if (args.length < 2) {
   console.error("Please provide Apex API Key & Apex API URL");
   process.exit(1);
 }
-const apiKey = args[0];
-const apiUrl = args[1];
+
+const [apiKey, apiUrl] = args;
 
 // Set environment variables from command line args
 process.env.APEX_BEARER_TOKEN = apiKey;
 process.env.APEX_API_URL = apiUrl;
 
+// Validate environment after setting variables
+validateEnvironment();
+
+// Helper function for making API requests
+async function makeApexRequest(endpoint: string, options: RequestInit = {}) {
+  const url = `${process.env.APEX_API_URL}${endpoint}`;
+  
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Authorization': `Bearer ${process.env.APEX_BEARER_TOKEN}`,
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`API request failed (${response.status}): ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+// Helper function for formatting tool responses
+function createToolResponse(data: any, isError = false) {
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: typeof data === 'string' ? data : JSON.stringify(data, null, 2)
+      }
+    ],
+    isError
+  };
+}
+
+// Helper function for handling tool errors
+function handleToolError(error: unknown) {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+  console.error('Tool execution error:', errorMessage);
+  return createToolResponse(`Error: ${errorMessage}`, true);
+}
+
+// Create MCP server
 const server = new McpServer({
   name: "apex-mcp",
   version: "1.0.0"
@@ -25,24 +80,12 @@ const getTweetTool = server.tool(
   "A tool to get a tweet by its id.",
   { id: z.string().describe("Id of the tweet to get.") },
   async ({ id }) => {
-    const url = `${process.env.APEX_API_URL}/apex/tweet/${id}/details`;
-    
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${process.env.APEX_BEARER_TOKEN}`
-      }
-    });
-
-    const data = await response.json();
-    
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(data, null, 2)
-        }
-      ]
-    };
+    try {
+      const data = await makeApexRequest(`/apex/tweet/${id}/details`);
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
   }
 );
 
@@ -55,33 +98,34 @@ const generateReplyTool = server.tool(
     image_urls: z.array(z.string()).optional().describe("Array of image URLs used as context for the reply. If not provided, the reply will be to only text.")
   },
   async ({ text, image_urls }) => {
-    const params = new URLSearchParams();
-    params.append('text', text);
-    
-    if (image_urls && image_urls.length > 0) {
-      image_urls.forEach((url: string) => {
-        params.append('image_url', url);
-      });
-    }
-
-    const response = await fetch(`${process.env.APEX_API_URL}/apex/reply?${params.toString()}`, {
-      method: "GET",
-      headers: {
-        'Authorization': `Bearer ${process.env.APEX_BEARER_TOKEN}`,
-        'accept': 'application/json'
+    try {
+      const params = new URLSearchParams();
+      params.append('text', text);
+      
+      if (image_urls && image_urls.length > 0) {
+        image_urls.forEach((url: string) => {
+          params.append('image_url', url);
+        });
       }
-    });
 
-    const data = await response.json();
-    
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(data, null, 2)
+      // Note: This endpoint uses GET with query params
+      const response = await fetch(`${process.env.APEX_API_URL}/apex/reply?${params.toString()}`, {
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${process.env.APEX_BEARER_TOKEN}`,
+          'accept': 'application/json'
         }
-      ]
-    };
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed (${response.status}): ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
   }
 );
 
@@ -93,22 +137,12 @@ const generateReplyToTweetTool = server.tool(
     id: z.string().describe("Id of the tweet to generate a reply to")
   },
   async ({ id }) => {
-    const response = await fetch(`${process.env.APEX_API_URL}/apex/tweet/${id}/reply`, {
-      headers: {
-        'Authorization': `Bearer ${process.env.APEX_BEARER_TOKEN}`,
-      }
-    });
-
-    const data = await response.json();
-    
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(data, null, 2)
-        }
-      ]
-    };
+    try {
+      const data = await makeApexRequest(`/apex/tweet/${id}/reply`);
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
   }
 );
 
@@ -119,34 +153,22 @@ const postTweetTool = server.tool(
   { 
     username: z.string().describe("Username of the user posting the tweet."),
     text: z.string().describe("Text of the tweet to be posted."),
-    image_urls: z.array(z.string()).optional().describe("Optional image URL to include with the tweet.")
+    image_urls: z.array(z.string()).optional().describe("Optional image URLs to include with the tweet.")
   },
   async ({ username, text, image_urls }) => {
-    const url = `${process.env.APEX_API_URL}/apex/tweet`;
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.APEX_BEARER_TOKEN}`,
-      },
-      body: JSON.stringify({ 
-        username,
-        text,
-        image_urls
-      }),
-    });
-
-    const data = await response.json();
-    
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(data, null, 2)
-        }
-      ]
-    };
+    try {
+      const data = await makeApexRequest('/apex/tweet', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          username,
+          text,
+          image_urls
+        }),
+      });
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
   }
 );
 
@@ -159,27 +181,15 @@ const postReplyToTweetTool = server.tool(
     text: z.string().describe("Text of the reply to be posted.")
   },
   async ({ tweet_id, text }) => {
-    const response = await fetch(`${process.env.APEX_API_URL}/apex/tweet/${tweet_id}/reply`, {
-      method: "POST",
-      headers: {
-        'Authorization': `Bearer ${process.env.APEX_BEARER_TOKEN}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        text: text,
-      })
-    });
-
-    const data = await response.json();
-    
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(data, null, 2)
-        }
-      ]
-    };
+    try {
+      const data = await makeApexRequest(`/apex/tweet/${tweet_id}/reply`, {
+        method: 'POST',
+        body: JSON.stringify({ text }),
+      });
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
   }
 );
 
@@ -212,54 +222,41 @@ const searchTweetsTool = server.tool(
     toUsers: z.array(z.string()).optional().describe("The list of username to whom the tweets to be searched, are adressed. '@' must be excluded from the username!")
   },
   async (input) => {
-    const params = new URLSearchParams();
+    try {
+      const params = new URLSearchParams();
 
-    for (const key in input) {
-      if (input[key as keyof typeof input] !== undefined) {
-        const value = input[key as keyof typeof input];
-        if (Array.isArray(value)) {
-          value.forEach(v => params.append(key, v));
-        } else if (value instanceof Date) {
-          params.append(key, value.toISOString());
-        } else {
-          params.append(key, String(value));
-        }
-      }
-    }
-
-    const url = `${process.env.APEX_API_URL}/apex/tweet/search?${params.toString()}`;
-    
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${process.env.APEX_BEARER_TOKEN}`
-      }
-    });
-
-    if (!response.ok) {
-      const errorText = `Failed to fetch tweets: ${response.statusText}`;
-      return {
-        content: [
-          {
-            type: "text",
-            text: errorText
+      for (const key in input) {
+        if (input[key as keyof typeof input] !== undefined) {
+          const value = input[key as keyof typeof input];
+          if (Array.isArray(value)) {
+            value.forEach(v => params.append(key, v));
+          } else if (value instanceof Date) {
+            params.append(key, value.toISOString());
+          } else {
+            params.append(key, String(value));
           }
-        ],
-        isError: true
-      };
-    }
-
-    const data = await response.json();
-
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(data, null, 2)
         }
-      ]
-    };
+      }
+
+      // Note: Search endpoint uses GET with query params, so we use direct fetch
+      const response = await fetch(`${process.env.APEX_API_URL}/apex/tweet/search?${params.toString()}`, {
+        headers: {
+          'Authorization': `Bearer ${process.env.APEX_BEARER_TOKEN}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Search request failed (${response.status}): ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
   }
 );
 
+// Start the server
 const transport = new StdioServerTransport();
 await server.connect(transport);
