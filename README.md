@@ -15,7 +15,7 @@ Supported platforms:
 - post tweet
 - post reply
 
-## Set Up
+## Apex Set Up
 
 1. Create an account at [Apex](https://apexagents.ai).
 2. Request an [API Key](https://t.me/xonack).
