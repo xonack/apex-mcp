@@ -52,7 +52,7 @@ Add this configuration to your Claude Desktop config file:
   "mcpServers": {
     "apex-mcp-server": {
       "command": "node",
-      "args":["/absolute/path/to/apex-mcp-stdio/dist/index.js", <APEX API KEY>, <APEX URL>]
+      "args":["/absolute/path/to/apex-mcp-stdio/dist/index.js", "<APEX API KEY>", "<APEX URL>"]
     }
   }
 }
