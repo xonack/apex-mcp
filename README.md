@@ -20,9 +20,11 @@ Supported platforms:
 1. Create an account at [Apex](https://apexagents.ai).
 2. Request an [API Key](https://t.me/xonack).
 
-## Quick Start with Smithery
+## Quick Start with Smithery (Recommended)
 
 Install with Smithery [here](https://smithery.ai/server/@xonack/apex-mcp).
+
+
 
 ## Manual Set Up
 
