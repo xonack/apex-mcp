@@ -1,3 +1,5 @@
+[![smithery badge](https://smithery.ai/badge/@xonack/apex-mcp)](https://smithery.ai/server/@xonack/apex-mcp)
+
 # apex-mcp-stdio
 
 A Model Context Protocol (MCP) server to interface with the [Apex](https://apexagents.ai) social media infrastructure.
@@ -16,6 +18,10 @@ Supported platforms:
 
 1. Create an account at [Apex](https://apexagents.ai).
 2. Request an [API Key](https://t.me/xonack).
+
+## Quick Start with Smithery
+
+Set up with Smithery [here](https://smithery.ai/server/@xonack/apex-mcp).
 
 ## Quick Start
 
