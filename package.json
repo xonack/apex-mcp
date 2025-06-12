@@ -12,6 +12,7 @@
   "scripts": {
     "build": "tsc && mcp-build",
     "watch": "tsc --watch",
+    "dev": "tsc --watch --preserveWatchOutput & npm run build --silent",
     "start": "node dist/index.js"
   },
   "dependencies": {
