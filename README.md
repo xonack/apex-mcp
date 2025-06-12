@@ -1,8 +1,9 @@
 [![smithery badge](https://smithery.ai/badge/@xonack/apex-mcp)](https://smithery.ai/server/@xonack/apex-mcp)
 
-# apex-mcp-stdio
+# MCP Server for X (Twitter) Management 
+### Powered by Apex
 
-A Model Context Protocol (MCP) server to interface with the [Apex](https://apexagents.ai) social media infrastructure.
+Manage your X (Twitter) fully with a single API Key. Built using [Apex](https://apexagents.ai) social media infrastructure.
 
 Supported platforms:
 - X
