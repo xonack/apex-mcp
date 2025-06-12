@@ -3,7 +3,7 @@ build:
   dockerfile: "Dockerfile"           # Path to your Dockerfile
   dockerBuildPath: "."               # Docker build context
 startCommand:
-  type: "http"
+  type: "stdio"
   configSchema:                      # JSON Schema for configuration
     type: "object"
     properties:
@@ -20,4 +20,8 @@ startCommand:
   exampleConfig:
     bearerToken: "example123"
     apiUrl: "https://apex-backend-beta-435707161213.us-west1.run.app"
+  commandFunction:
+    # A function that produces the CLI command to start the MCP on stdio.
+    |-
+    config => ({ command: 'node', args: ['dist/index.js', config.bearerToken, config.apiUrl] })
   
