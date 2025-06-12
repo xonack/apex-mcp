@@ -61,4 +61,4 @@ Add this configuration to your Claude Desktop config file:
 }
 ```
 
-Open Claude Desktop to verify connection.
+Open [Claude Desktop](https://claude.ai/download) to verify connection.
