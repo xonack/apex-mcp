@@ -21,15 +21,11 @@ Supported platforms:
 
 ## Quick Start with Smithery
 
-Set up with Smithery [here](https://smithery.ai/server/@xonack/apex-mcp).
+Install with Smithery [here](https://smithery.ai/server/@xonack/apex-mcp).
 
-## Quick Start
+## Manual Set Up
 
-Create `.env` file:
-```.env
-APEX_BEARER_TOKEN=<Your-Apex-Token>
-APEX_API_URL=<Apex-API-Url>
-```
+Clone Repo.
 
 Run commands:
 
@@ -56,8 +52,10 @@ Add this configuration to your Claude Desktop config file:
   "mcpServers": {
     "apex-mcp-server": {
       "command": "node",
-      "args":["/absolute/path/to/apex-mcp-stdio/dist/index.js"]
+      "args":["/absolute/path/to/apex-mcp-stdio/dist/index.js", <APEX API KEY>, <APEX URL>]
     }
   }
 }
 ```
+
+Open Claude Desktop to verify connection.
