@@ -213,8 +213,6 @@ const searchTweetsTool = server.tool(
           const value = input[key as keyof typeof input];
           if (Array.isArray(value)) {
             value.forEach(v => params.append(key, v));
-          } else if (value instanceof Date) {
-            params.append(key, value.toISOString());
           } else {
             params.append(key, String(value));
           }
