@@ -8,7 +8,6 @@ if (args.length < 2) {
   console.error("Please provide Apex API Key & Apex API URL");
   process.exit(1);
 }
-
 const [bearerToken, apiUrl] = args;
 
 // Helper function for making API requests
