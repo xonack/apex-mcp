@@ -2,13 +2,15 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-// Parse and validate command line arguments
-const args = process.argv.slice(2);
-if (args.length < 2) {
-  console.error("Please provide Apex API Key & Apex API URL");
+// Parse and validate environment variables
+const bearerToken = process.env.APEX_API_KEY;
+const apiUrl = process.env.APEX_API_URL;
+
+if (!bearerToken || !apiUrl) {
+  console.error("Please provide APEX_API_KEY and APEX_API_URL environment variables");
   process.exit(1);
 }
-const [bearerToken, apiUrl] = args;
+
 
 // Helper function for making API requests
 async function makeApexRequest(endpoint: string, options: RequestInit = {}) {
