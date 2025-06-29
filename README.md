@@ -19,6 +19,7 @@ Supported platforms:
 
 1. Create an account at [Apex](https://apexagents.ai).
 2. Request an [API Key](https://t.me/xonack).
+3. Review [Apex API Docs](https://api.apexagents.ai)
 
 ## Quick Start with Smithery (Recommended)
 
