@@ -62,7 +62,7 @@
       "title": "Apex API URL",
       "description": "The Apex API base URL provided with your API key",
       "required": true,
-      "default": "https://apex-backend-435707161213.us-west1.run.app"
+      "default": "https://api.apexagents.ai"
     }
   },
   "compatibility": {
