@@ -14,7 +14,7 @@ startCommand:
       apiUrl:
         type: "string"
         title: "Apex API URL"
-        description: "Enter your Apex API URL. Defaults to beta."
+        description: "Enter your Apex API URL."
         default: "https://api.apexagents.ai"
     required: ["bearerToken"]
   exampleConfig:
