@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/xonack-apex-mcp-badge.png)](https://mseep.ai/app/xonack-apex-mcp)
+
 [![smithery badge](https://smithery.ai/badge/@xonack/apex-mcp)](https://smithery.ai/server/@xonack/apex-mcp)
 
 # MCP Server for X (Twitter) Management 
