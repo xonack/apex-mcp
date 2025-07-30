@@ -1,13 +1,14 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { ListResourcesRequestSchema, ListPromptsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 
 // Parse and validate environment variables
 const bearerToken = process.env.APEX_API_KEY;
-const apiUrl = process.env.APEX_API_URL;
+const apiUrl = process.env.APEX_API_URL || "https://api.apexagents.ai";
 
-if (!bearerToken || !apiUrl) {
-  console.error("Please provide APEX_API_KEY and APEX_API_URL environment variables");
+if (!bearerToken) {
+  console.error("Please provide APEX_API_KEY environment variable");
   process.exit(1);
 }
 
@@ -56,6 +57,33 @@ function handleToolError(error: unknown) {
 const server = new McpServer({
   name: "apex-mcp",
   version: "1.0.0"
+});
+
+// Add resources capability and handler (currently no resources defined)
+server.server.registerCapabilities({
+  resources: {
+    subscribe: false,
+    listChanged: false
+  }
+});
+
+server.server.setRequestHandler(ListResourcesRequestSchema, async () => {
+  return {
+    resources: []
+  };
+});
+
+// Add prompts capability and handler (currently no prompts defined)
+server.server.registerCapabilities({
+  prompts: {
+    listChanged: false
+  }
+});
+
+server.server.setRequestHandler(ListPromptsRequestSchema, async () => {
+  return {
+    prompts: []
+  };
 });
 
 // Register the GetTweetTool
@@ -242,6 +270,40 @@ const searchTweetsTool = server.tool(
   }
 );
 
-// Start the server
-const transport = new StdioServerTransport();
-await server.connect(transport);
+// Validate API connectivity before starting server
+async function validateApiConnection() {
+  try {
+    console.error(`Validating API connection to ${apiUrl}...`);
+    // Simple connectivity test - we don't need a valid endpoint, just check if the host is reachable
+    const response = await fetch(apiUrl, {
+      method: 'HEAD',
+      headers: {
+        'Authorization': `Bearer ${bearerToken}`
+      }
+    });
+    console.error(`API connectivity check completed (status: ${response.status})`);
+  } catch (error) {
+    console.error(`Warning: Could not validate API connectivity: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error('Server will continue but API calls may fail');
+  }
+}
+
+// Start the server with proper error handling
+async function startServer() {
+  try {
+    console.error('Starting Apex MCP Server...');
+    console.error(`Bearer Token: ${bearerToken ? '***' + bearerToken.slice(-4) : 'Not provided'}`);
+    console.error(`API URL: ${apiUrl}`);
+    
+    await validateApiConnection();
+    
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error('Apex MCP Server started successfully');
+  } catch (error) {
+    console.error('Failed to start server:', error instanceof Error ? error.message : 'Unknown error');
+    process.exit(1);
+  }
+}
+
+startServer();
