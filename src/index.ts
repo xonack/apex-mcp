@@ -178,33 +178,42 @@ const postReplyToTweetTool = server.tool(
 // Register the SearchTweetsTool
 const searchTweetsTool = server.tool(
   "search_tweets",
-  "A tool to search for tweets by a given query.",
+  `Advanced Twitter/X search tool for finding tweets with powerful filtering capabilities.
+  
+  Returns tweets matching your criteria, sorted by relevance or time. Expect 2-5 second response times.
+  Note: API may return duplicate entries - this is normal behavior.
+  
+  Common patterns:
+  • High-quality content: Set minLikes to 100+ and use includeWords for topics
+  • Viral analysis: Use minRetweets 50+ with hashtags and top=true
+  • User analysis: Combine fromUsers with date ranges and engagement filters
+  • Content exclusion: Use excludeWords to filter out unwanted topics`,
   {
-    count: z.number().optional().describe("Number of tweets to return"),
-    cursor: z.string().optional().describe("The pagination cursor for next batch of results."),
-    endDate: z.string().optional().describe("The date upto which tweets are to be searched."),
-    excludeWords: z.array(z.string()).optional().describe("The list of words to exclude from search."),
-    fromUsers: z.array(z.string()).optional().describe("The list of usernames whose tweets are to be searched. '@' must be excluded from the username!"),
-    hashtags: z.array(z.string()).optional().describe("The list of hashtags to search. '#' must be excluded from the hashtag!"),
-    includePhrase: z.string().optional().describe("The exact phrase to search."),
-    includeWords: z.array(z.string()).optional().describe("The list of words to search."),
-    language: z.string().optional().describe("The language of the tweets to search."),
-    list: z.string().optional().describe("The list from which tweets are to be searched."),
-    maxId: z.string().optional().describe("The id of the tweet, before which the tweets are to be searched."),
-    mentions: z.array(z.string()).optional().describe("The list of username mentioned in the tweets to search. '@' must be excluded from the username!"),
-    minLikes: z.number().optional().describe("The minimun number of likes to search by."),
-    minReplies: z.number().optional().describe("The minimum number of replies to search by."),
-    minRetweets: z.number().optional().describe("The minimum number of retweets to search by."),
-    onlyLinks: z.boolean().optional().describe("Whether to search only for tweets with links."),
-    onlyOriginal: z.boolean().optional().describe("Whether to search only for original tweets."),
-    onlyReplies: z.boolean().optional().describe("Whether to search only for replies."),
-    onlyText: z.boolean().optional().describe("Whether to search only for text tweets."),
-    optionalWords: z.array(z.string()).optional().describe("The optional words to search."),
-    quoted: z.string().optional().describe("The id of the tweet which is quoted in the tweets to search."),
-    sinceId: z.string().optional().describe("The id of the tweet, after which the tweets are to be searched."),
-    startDate: z.string().optional().describe("The date starting from which tweets are to be searched."),
-    top: z.boolean().optional().describe("Whether to fetch top tweets or not."),
-    toUsers: z.array(z.string()).optional().describe("The list of username to whom the tweets to be searched, are adressed. '@' must be excluded from the username!")
+    count: z.number().optional().describe("Number of tweets to return. Recommended: 50 for comprehensive results, 20 for quick scans. Max practical limit ~50."),
+    cursor: z.string().optional().describe("Pagination cursor for next batch of results. Use the cursor from previous response to get more results."),
+    endDate: z.string().optional().describe("End date for search range. Format: YYYY-MM-DD (e.g., '2025-07-30')"),
+    excludeWords: z.array(z.string()).optional().describe("Words to exclude from results. Format: ['word1', 'word2']. Useful for filtering out unwanted topics like ['crypto', 'spam']"),
+    fromUsers: z.array(z.string()).optional().describe("Search tweets FROM these users. Format: ['username'] WITHOUT @ symbol. Example: ['elonmusk', 'OpenAI'] NOT ['@elonmusk', '@OpenAI']"),
+    hashtags: z.array(z.string()).optional().describe("Hashtags to search for. Format: ['tag1', 'tag2'] WITHOUT # symbol. Example: ['AI', 'web3'] NOT ['#AI', '#web3']"),
+    includePhrase: z.string().optional().describe("Exact phrase to search for. Will match this exact sequence of words in tweets."),
+    includeWords: z.array(z.string()).optional().describe("Words that must appear in results. Format: ['word1', 'word2']. Example: ['AI', 'machine learning'] to find tweets about AI/ML"),
+    language: z.string().optional().describe("Language filter using ISO codes. Examples: 'en' (English), 'es' (Spanish), 'fr' (French), 'de' (German), 'ja' (Japanese)"),
+    list: z.string().optional().describe("Twitter/X list ID to search within. Limits results to tweets from members of this list."),
+    maxId: z.string().optional().describe("Tweet ID upper bound - only return tweets with IDs less than this. Useful for pagination backwards in time."),
+    mentions: z.array(z.string()).optional().describe("Find tweets mentioning these users. Format: ['username'] WITHOUT @ symbol. Example: ['JensHonack'] NOT ['@JensHonack']"),
+    minLikes: z.number().optional().describe("Minimum likes threshold. Use 50+ for social proof, 100+ for popular content, 1000+ for viral tweets"),
+    minReplies: z.number().optional().describe("Minimum replies threshold. Useful for finding tweets that sparked discussion. Try 10+ for engaged conversations"),
+    minRetweets: z.number().optional().describe("Minimum retweets threshold. Use 10+ for shared content, 50+ for viral reach, 100+ for highly viral"),
+    onlyLinks: z.boolean().optional().describe("Set to true to find only tweets containing URLs. Useful for finding shared articles, resources, or media"),
+    onlyOriginal: z.boolean().optional().describe("Set to true to exclude retweets and quote tweets. Gets only original content from users"),
+    onlyReplies: z.boolean().optional().describe("Set to true to find only reply tweets. Useful for analyzing conversations and discussions"),
+    onlyText: z.boolean().optional().describe("Set to true to exclude tweets with media (photos/videos). Gets text-only content"),
+    optionalWords: z.array(z.string()).optional().describe("Optional words that may appear. Format: ['word1', 'word2']. Tweets may contain any of these words"),
+    quoted: z.string().optional().describe("Tweet ID to find quote tweets of. Returns all tweets that quote this specific tweet"),
+    sinceId: z.string().optional().describe("Tweet ID lower bound - only return tweets with IDs greater than this. Useful for getting new tweets since last search"),
+    startDate: z.string().optional().describe("Start date for search range. Format: YYYY-MM-DD (e.g., '2025-07-25'). Can search historical tweets from months/years back"),
+    top: z.boolean().optional().describe("Set to true for trending/popular tweets instead of recent. Returns high-engagement content sorted by relevance"),
+    toUsers: z.array(z.string()).optional().describe("Find tweets TO/replying to these users. Format: ['username'] WITHOUT @ symbol. Example: ['elonmusk'] NOT ['@elonmusk']")
   },
   async (input) => {
     try {
@@ -239,6 +248,37 @@ const searchTweetsTool = server.tool(
     }
   }
 );
+
+/* 
+SEARCH TOOL USAGE EXAMPLES AND RESPONSE STRUCTURE:
+
+Example Patterns:
+1. High-Quality Content Discovery:
+   { count: 20, includeWords: ["AI", "machine learning"], minLikes: 100, onlyOriginal: true, language: "en" }
+
+2. Viral Content Analysis:
+   { count: 15, hashtags: ["crypto", "web3"], minRetweets: 50, top: true }
+
+3. User-Specific Analysis:
+   { count: 10, fromUsers: ["elonmusk"], startDate: "2025-07-25", minLikes: 500 }
+
+4. Content Exclusion:
+   { count: 30, includeWords: ["machine learning"], excludeWords: ["crypto", "bitcoin"], minLikes: 50 }
+
+Response Structure:
+- Returns array of tweet objects
+- May contain duplicates (normal API behavior)
+- Each tweet includes:
+  * id: Tweet ID string
+  * fullText: Complete tweet content
+  * createdAt: ISO timestamp
+  * likeCount, retweetCount, replyCount, viewCount: Engagement metrics
+  * conversationId: Groups related tweets
+  * replyTo: Parent tweet ID if reply
+  * tweetBy: User object with userName, fullName, followersCount, isVerified, etc.
+  * entities: Contains hashtags[], mentionedUsers[], urls[]
+  * media: Array of {type: "PHOTO"|"VIDEO", url, thumbnailUrl}
+*/
 
 // Start the server
 const transport = new StdioServerTransport();
