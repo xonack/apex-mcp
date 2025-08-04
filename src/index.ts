@@ -11,16 +11,38 @@ if (args.length < 2) {
 const [bearerToken, apiUrl] = args;
 
 // Helper function for making API requests
-async function makeApexRequest(endpoint: string, options: RequestInit = {}) {
-  const url = `${apiUrl}${endpoint}`;
+async function makeApexRequest(
+  endpoint: string, 
+  options: RequestInit & { queryParams?: URLSearchParams | Record<string, any> } = {}
+) {
+  // Handle query parameters if provided
+  let url = `${apiUrl}${endpoint}`;
+  if (options.queryParams) {
+    const params = options.queryParams instanceof URLSearchParams 
+      ? options.queryParams 
+      : new URLSearchParams(options.queryParams);
+    url += `?${params.toString()}`;
+  }
+  
+  // Build headers - only add Content-Type for requests with body
+  const headers: Record<string, string> = {
+    'Authorization': `Bearer ${bearerToken}`,
+    'Consumer-Type': 'mcp',
+  };
+  
+  // Only add Content-Type for requests with body
+  if (options.body && options.method?.toUpperCase() !== 'GET') {
+    headers['Content-Type'] = 'application/json';
+  }
+  
+  // Merge with any provided headers
+  if (options.headers) {
+    Object.assign(headers, options.headers);
+  }
   
   const response = await fetch(url, {
     ...options,
-    headers: {
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
   });
 
   if (!response.ok) {
@@ -90,20 +112,14 @@ const generateReplyTool = server.tool(
         });
       }
 
-      // Note: This endpoint uses GET with query params
-      const response = await fetch(`${apiUrl}/apex/reply?${params.toString()}`, {
-        method: "GET",
+      const data = await makeApexRequest('/apex/reply', {
+        method: 'GET',
+        queryParams: params,
         headers: {
-          'Authorization': `Bearer ${bearerToken}`,
           'accept': 'application/json'
         }
       });
-
-      if (!response.ok) {
-        throw new Error(`API request failed (${response.status}): ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      
       return createToolResponse(data);
     } catch (error) {
       return handleToolError(error);
@@ -230,18 +246,11 @@ const searchTweetsTool = server.tool(
         }
       }
 
-      // Note: Search endpoint uses GET with query params, so we use direct fetch
-      const response = await fetch(`${apiUrl}/apex/tweet/search?${params.toString()}`, {
-        headers: {
-          'Authorization': `Bearer ${bearerToken}`
-        }
+      const data = await makeApexRequest('/apex/tweet/search', {
+        method: 'GET',
+        queryParams: params
       });
-
-      if (!response.ok) {
-        throw new Error(`Search request failed (${response.status}): ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      
       return createToolResponse(data);
     } catch (error) {
       return handleToolError(error);
