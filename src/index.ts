@@ -289,6 +289,243 @@ Response Structure:
   * media: Array of {type: "PHOTO"|"VIDEO", url, thumbnailUrl}
 */
 
+// Register the AddListMemberTool
+const addListMemberTool = server.tool(
+  "add_list_member",
+  "Add a member to an X/Twitter list.",
+  {
+    listId: z.string().describe("ID of the list"),
+    userId: z.string().describe("ID of the user to add to the list")
+  },
+  async ({ listId, userId }) => {
+    try {
+      const data = await makeApexRequest(`/apex/list/${listId}/member`, {
+        method: 'POST',
+        body: JSON.stringify({ userId })
+      });
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
+  }
+);
+
+/* 
+GET LIST MEMBERS RESPONSE STRUCTURE:
+Returns paginated list of user objects who are members of the specified list.
+
+Example Response:
+{
+  "cursor": "eyJza2lwIjoxMDB9",  // Use this cursor for next page
+  "items": [
+    {
+      "id": "1234567890",
+      "username": "johndoe",
+      "name": "John Doe", 
+      "image": "https://pbs.twimg.com/profile_images/...",
+      "active": true,
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "updatedAt": "2025-07-28T15:45:00.000Z"
+      // Additional fields may include user settings and configuration
+    }
+  ]
+}
+*/
+const getListMembersTool = server.tool(
+  "get_list_members",
+  "Get members of a list with pagination support. Returns user objects for each member.",
+  {
+    listId: z.string().describe("ID of the list"),
+    cursor: z.string().optional().describe("Pagination cursor from previous response"),
+    maxResults: z.number().min(1).max(200).optional()
+      .describe("Maximum results per page (1-200, default: 100)")
+  },
+  async ({ listId, cursor, maxResults }) => {
+    try {
+      const params = new URLSearchParams();
+      if (cursor) params.append('cursor', cursor);
+      if (maxResults) params.append('maxResults', String(maxResults));
+      
+      const queryString = params.toString();
+      const url = `/apex/list/${listId}/member${queryString ? `?${queryString}` : ''}`;
+      
+      const data = await makeApexRequest(url);
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
+  }
+);
+
+// Register the CreateListTool
+const createListTool = server.tool(
+  "create_list",
+  "Create a new X/Twitter list. Returns the created list object with assigned ID.",
+  {
+    name: z.string().min(1).max(25).describe("Name of the list (1-25 characters)"),
+    description: z.string().max(100).optional()
+      .describe("Description of the list (max 100 characters)"),
+    private: z.boolean().optional().describe("Whether the list is private (default: false)")
+  },
+  async ({ name, description, private: isPrivate }) => {
+    try {
+      const body: any = { name };
+      if (description !== undefined) body.description = description;
+      if (isPrivate !== undefined) body.private = isPrivate;
+      
+      const data = await makeApexRequest('/apex/list', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      });
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
+  }
+);
+
+/* 
+GET USER LISTS RESPONSE STRUCTURE:
+Returns paginated array of list objects owned by the authenticated user.
+
+Example Response:
+{
+  "cursor": "eyJza2lwIjo1MH0=",
+  "items": [
+    {
+      "id": "1557055489589886976",
+      "name": "Tech Leaders",
+      "description": "Top voices in technology",
+      "private": false,
+      "createdAt": "2024-08-09T14:30:00.000Z",
+      "memberCount": 150,
+      "followerCount": 2500,
+      "owner": {
+        "id": "1234567890",
+        "username": "myusername",
+        "name": "My Display Name",
+        // Full user object of list owner
+      }
+    }
+  ]
+}
+*/
+const getUserListsTool = server.tool(
+  "get_user_lists",
+  "Get all lists owned by the authenticated user. Returns list objects with metadata.",
+  {
+    cursor: z.string().optional().describe("Pagination cursor from previous response"),
+    maxResults: z.number().min(1).max(200).optional()
+      .describe("Maximum results per page (1-200, default: 100)")
+  },
+  async ({ cursor, maxResults }) => {
+    try {
+      const params = new URLSearchParams();
+      if (cursor) params.append('cursor', cursor);
+      if (maxResults) params.append('maxResults', String(maxResults));
+      
+      const queryString = params.toString();
+      const url = `/apex/list${queryString ? `?${queryString}` : ''}`;
+      
+      const data = await makeApexRequest(url);
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
+  }
+);
+
+// Register the DeleteListTool
+const deleteListTool = server.tool(
+  "delete_list",
+  "Delete an X/Twitter list. This action cannot be undone.",
+  {
+    listId: z.string().describe("ID of the list to delete")
+  },
+  async ({ listId }) => {
+    try {
+      const data = await makeApexRequest(`/apex/list/${listId}`, {
+        method: 'DELETE'
+      });
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
+  }
+);
+
+/* 
+GET LIST RESPONSE STRUCTURE:
+Returns detailed information about a specific list.
+
+Example Response:
+{
+  "id": "1557055489589886976",
+  "name": "Tech Leaders",
+  "description": "Top voices in technology and innovation",
+  "private": false,
+  "createdAt": "2024-08-09T14:30:00.000Z",
+  "memberCount": 150,
+  "followerCount": 2500,
+  "owner": {
+    "id": "1234567890",
+    "username": "techguru",
+    "name": "Tech Guru",
+    "image": "https://pbs.twimg.com/profile_images/...",
+    // Additional owner details
+  }
+}
+*/
+const getListTool = server.tool(
+  "get_list",
+  "Get detailed information about a specific list including member/follower counts.",
+  {
+    listId: z.string().describe("ID of the list to retrieve")
+  },
+  async ({ listId }) => {
+    try {
+      const data = await makeApexRequest(`/apex/list/${listId}`);
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
+  }
+);
+
+// Register the UpdateListTool
+const updateListTool = server.tool(
+  "update_list",
+  "Update an existing list's properties. Only provided fields will be updated.",
+  {
+    listId: z.string().describe("ID of the list to update"),
+    name: z.string().min(1).max(25).optional()
+      .describe("New name for the list (1-25 characters)"),
+    description: z.string().max(100).optional()
+      .describe("New description (max 100 characters)"),
+    private: z.boolean().optional().describe("Update privacy setting")
+  },
+  async ({ listId, name, description, private: isPrivate }) => {
+    try {
+      const body: any = {};
+      if (name !== undefined) body.name = name;
+      if (description !== undefined) body.description = description;
+      if (isPrivate !== undefined) body.private = isPrivate;
+      
+      if (Object.keys(body).length === 0) {
+        return createToolResponse({ message: "No fields to update" });
+      }
+      
+      const data = await makeApexRequest(`/apex/list/${listId}`, {
+        method: 'PUT',
+        body: JSON.stringify(body)
+      });
+      return createToolResponse(data);
+    } catch (error) {
+      return handleToolError(error);
+    }
+  }
+);
+
 // Start the server
 const transport = new StdioServerTransport();
 await server.connect(transport);
