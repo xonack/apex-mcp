@@ -4,6 +4,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from "zod";
 import { randomUUID } from "crypto";
+import express from 'express';
 
 // Parse and validate environment variables
 const bearerToken = process.env.APEX_API_KEY;
@@ -76,34 +77,59 @@ function handleToolError(error: unknown) {
   return createToolResponse(`Error: ${errorMessage}`, true);
 }
 
-// HTTP-first transport selection (default to cloud deployment)
-async function createTransport() {
-  // STDIO only when explicitly set
-  if (process.env.MCP_TRANSPORT === 'stdio') {
-    console.error('🔧 Using STDIO transport for local development');
-    return new StdioServerTransport();
-  }
-  
-  // Default to HTTP (cloud-ready)
+// STDIO mode setup
+async function setupSTDIOMode() {
+  console.error('🔧 Using STDIO transport for local development');
+  const server = createMCPServerInstance();
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error('🚀 Apex MCP Server started with STDIO transport');
+}
+
+// HTTP mode setup
+async function setupHTTPMode() {
   const port = parseInt(process.env.PORT || '3000');
   const host = process.env.HOST || '0.0.0.0';
   
-  console.log(`🌐 Using StreamableHTTP transport on ${host}:${port}`);
+  console.log(`🌐 Starting Express server on ${host}:${port}`);
   
-  return new StreamableHTTPServerTransport({
-    sessionIdGenerator: () => randomUUID()
+  const app = express();
+  app.use(express.json());
+  
+  app.post('/mcp', async (req, res) => {
+    try {
+      const server = createMCPServerInstance();
+      const transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: undefined,
+      });
+      await server.connect(transport);
+      await transport.handleRequest(req, res, req.body);
+    } catch (error) {
+      console.error('MCP request error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
+  app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+  
+  app.listen(port, host, () => {
+    console.log(`📡 MCP Server listening on http://${host}:${port}/mcp`);
+    console.log(`🚀 Apex MCP Server started with HTTP transport`);
   });
 }
 
-// Create MCP server
-const server = new McpServer({
-  name: "apex-mcp",
-  version: "1.0.0"
-});
+// MCP Server factory function
+function createMCPServerInstance() {
+  const server = new McpServer({
+    name: "apex-mcp",
+    version: "1.0.0"
+  });
 
-// Register the GetTweetTool
-const getTweetTool = server.tool(
-  "get_tweet",
+  // Register the GetTweetTool
+  const getTweetTool = server.tool(
+    "get_tweet",
   "A tool to get a tweet by its id.",
   { id: z.string().describe("Id of the tweet to get.") },
   async ({ id }) => {
@@ -549,13 +575,16 @@ const updateListTool = server.tool(
   }
 );
 
-// Start the server with HTTP-first transport
-const transport = await createTransport();
-await server.connect(transport);
-
-const transportType = process.env.MCP_TRANSPORT === 'stdio' ? 'STDIO' : 'HTTP';
-if (process.env.MCP_TRANSPORT === 'stdio') {
-  console.error(`🚀 Apex MCP Server started with ${transportType} transport`);
-} else {
-  console.log(`🚀 Apex MCP Server started with ${transportType} transport`);
+  return server;
 }
+
+// Main execution
+async function main() {
+  if (process.env.MCP_TRANSPORT === 'stdio') {
+    await setupSTDIOMode();
+  } else {
+    await setupHTTPMode();
+  }
+}
+
+main().catch(console.error);
