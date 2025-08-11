@@ -13,11 +13,14 @@ if (!bearerToken) {
   process.exit(1);
 }
 
+// Type assertion after validation
+const validatedBearerToken: string = bearerToken;
+
 
 // STDIO mode setup
 async function setupSTDIOMode() {
   console.error('🔧 Using STDIO transport for local development');
-  const server = createMCPServerInstance(bearerToken, apiUrl);
+  const server = createMCPServerInstance(validatedBearerToken, apiUrl);
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error('🚀 Apex MCP Server started with STDIO transport');
@@ -35,7 +38,7 @@ async function setupHTTPMode() {
   
   app.post('/mcp', async (req, res) => {
     try {
-      const server = createMCPServerInstance(bearerToken, apiUrl);
+      const server = createMCPServerInstance(validatedBearerToken, apiUrl);
       const transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: undefined,
       });
