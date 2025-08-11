@@ -1,29 +1,56 @@
 {
   "name": "apex-mcp-server",
-  "version": "0.0.1",
-  "description": "apex-mcp-server MCP server",
+  "version": "1.0.0",
+  "description": "Comprehensive X/Twitter management MCP server with list management, tweeting, searching, and AI-powered replies via Apex API",
   "type": "module",
   "bin": {
     "apex-mcp-server": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node -e \"const fs = require('fs'); const path = './dist/index.js'; let content = fs.readFileSync(path, 'utf8'); fs.writeFileSync(path, '#!/usr/bin/env node\\n' + content); fs.chmodSync(path, 0o755);\"",
     "watch": "tsc --watch",
-    "dev": "tsc --watch --preserveWatchOutput & npm run build --silent",
-    "start": "node dist/index.js"
+    "dev": "tsx src/index.ts",
+    "dev:stdio": "MCP_TRANSPORT=stdio tsx src/index.ts",
+    "start": "node dist/index.js",
+    "start:stdio": "MCP_TRANSPORT=stdio node dist/index.js",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "dotenv": "^16.5.0"
+    "@modelcontextprotocol/sdk": "^1.17.2",
+    "dotenv": "^16.5.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^20.11.24",
-    "typescript": "^5.3.3"
+    "@types/node": "^20.11.30",
+    "typescript": "^5.4.5",
+    "tsx": "^4.7.1"
   },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "twitter",
+    "x",
+    "social-media",
+    "apex",
+    "ai",
+    "automation",
+    "lists",
+    "tweets",
+    "claude"
+  ],
+  "author": "Apex MCP",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xonack/apex-mcp.git"
+  },
+  "homepage": "https://github.com/xonack/apex-mcp#readme",
   "engines": {
-    "node": ">=18.19.0"
-  }
+    "node": ">=18.0.0"
+  },
+  "preferGlobal": false
 }

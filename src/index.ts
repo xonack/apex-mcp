@@ -1,14 +1,18 @@
+import 'dotenv/config';
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from "zod";
+import { randomUUID } from "crypto";
 
-// Parse and validate command line arguments
-const args = process.argv.slice(2);
-if (args.length < 2) {
-  console.error("Please provide Apex API Key & Apex API URL");
+// Parse and validate environment variables
+const bearerToken = process.env.APEX_API_KEY;
+const apiUrl = process.env.APEX_API_URL || "https://api.apexagents.ai";
+
+if (!bearerToken) {
+  console.error("Please provide APEX_API_KEY environment variable");
   process.exit(1);
 }
-const [bearerToken, apiUrl] = args;
 
 // Helper function for making API requests
 async function makeApexRequest(
@@ -70,6 +74,25 @@ function handleToolError(error: unknown) {
   const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
   console.error('Tool execution error:', errorMessage);
   return createToolResponse(`Error: ${errorMessage}`, true);
+}
+
+// HTTP-first transport selection (default to cloud deployment)
+async function createTransport() {
+  // STDIO only when explicitly set
+  if (process.env.MCP_TRANSPORT === 'stdio') {
+    console.error('🔧 Using STDIO transport for local development');
+    return new StdioServerTransport();
+  }
+  
+  // Default to HTTP (cloud-ready)
+  const port = parseInt(process.env.PORT || '3000');
+  const host = process.env.HOST || '0.0.0.0';
+  
+  console.log(`🌐 Using StreamableHTTP transport on ${host}:${port}`);
+  
+  return new StreamableHTTPServerTransport({
+    sessionIdGenerator: () => randomUUID()
+  });
 }
 
 // Create MCP server
@@ -526,6 +549,13 @@ const updateListTool = server.tool(
   }
 );
 
-// Start the server
-const transport = new StdioServerTransport();
+// Start the server with HTTP-first transport
+const transport = await createTransport();
 await server.connect(transport);
+
+const transportType = process.env.MCP_TRANSPORT === 'stdio' ? 'STDIO' : 'HTTP';
+if (process.env.MCP_TRANSPORT === 'stdio') {
+  console.error(`🚀 Apex MCP Server started with ${transportType} transport`);
+} else {
+  console.log(`🚀 Apex MCP Server started with ${transportType} transport`);
+}
