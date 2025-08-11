@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Comprehensive X/Twitter management MCP server with list management, tweeting, searching, and AI-powered replies via Apex API",
   "type": "module",
-  "module": "./src/index.ts",
+  "module": "./src/smithery.ts",
   "bin": {
     "apex-mcp-server": "./dist/index.js"
   },
