@@ -9,6 +9,7 @@ WORKDIR /app
 # Copy package.json and package-lock.json to install dependencies
 COPY package.json package-lock.json ./
 
+# Cache bust for fresh npm install - 2025-08-11T15:42:00Z
 # Install dependencies
 RUN npm install --ignore-scripts
 
