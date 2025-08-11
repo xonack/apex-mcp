@@ -11,7 +11,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc && node -e \"const fs = require('fs'); const path = './dist/index.js'; let content = fs.readFileSync(path, 'utf8'); fs.writeFileSync(path, '#!/usr/bin/env node\\n' + content); fs.chmodSync(path, 0o755);\"",
+    "build": "tsc && node -e \"import fs from 'fs'; const path = './dist/index.js'; let content = fs.readFileSync(path, 'utf8'); fs.writeFileSync(path, '#!/usr/bin/env node\\n' + content); fs.chmodSync(path, 0o755);\"",
     "watch": "tsc --watch",
     "dev": "tsx src/index.ts",
     "dev:stdio": "MCP_TRANSPORT=stdio tsx src/index.ts",
