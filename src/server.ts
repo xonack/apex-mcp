@@ -42,7 +42,12 @@ async function makeApexRequest(
     throw new Error(`API request failed (${response.status}): ${response.statusText}`);
   }
 
-  return response.json();
+  const contentLength = response.headers.get('content-length');
+  if (contentLength === '0' || response.status === 204) {
+    return { success: true };
+  }
+  const text = await response.text();
+  return text ? JSON.parse(text) : { success: true };
 }
 
 // Helper function for formatting tool responses
