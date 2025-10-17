@@ -198,6 +198,17 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
     Returns tweets matching your criteria, sorted by relevance or time. Expect 2-5 second response times.
     Note: API may return duplicate entries - this is normal behavior.
     
+    IMPORTANT: There is no 'query' parameter. Use structured parameters instead.
+    
+    Example request:
+    {
+      "count": 20,
+      "minLikes": 100,
+      "includeWords": ["bitcoin", "treasury"],
+      "startDate": "2025-06-16",
+      "onlyOriginal": true
+    }
+    
     Common patterns:
     • High-quality content: Set minLikes to 100+ and use includeWords for topics
     • Viral analysis: Use minRetweets 50+ with hashtags and top=true
