@@ -442,9 +442,9 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
   // Register the FollowUserTool
   server.tool(
     "follow_user",
-    "Follow a user on Twitter/X by their user ID.",
+    "Follow a user on Twitter/X by their numerical Twitter ID (TWID). If you only have a username, use get_user_details first to get the TWID.",
     {
-      userId: z.string().describe("The Twitter ID of the user to follow")
+      userId: z.string().describe("The numerical Twitter ID (TWID) of the user to follow")
     },
     async ({ userId }) => {
       try {
@@ -461,9 +461,9 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
   // Register the UnfollowUserTool
   server.tool(
     "unfollow_user",
-    "Unfollow a user on Twitter/X by their user ID.",
+    "Unfollow a user on Twitter/X by their numerical Twitter ID (TWID). If you only have a username, use get_user_details first to get the TWID.",
     {
-      userId: z.string().describe("The Twitter ID of the user to unfollow")
+      userId: z.string().describe("The numerical Twitter ID (TWID) of the user to unfollow")
     },
     async ({ userId }) => {
       try {
@@ -520,6 +520,23 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
         const data = await makeApexRequest(`/twitter/user/${userId}/following`, {
           queryParams
         }, bearerToken, apiUrl);
+        return createToolResponse(data);
+      } catch (error) {
+        return handleToolError(error);
+      }
+    }
+  );
+
+  // Register the GetUserDetailsTool
+  server.tool(
+    "get_user_details",
+    "Get comprehensive user profile information by username or Twitter ID. Returns full user object including numerical Twitter ID (TWID), follower/following counts, verification status, profile image/banner, bio description, location, creation date, tweet counts, and more. Use this tool only when you need the TWID for follow/unfollow operations or want detailed profile information.",
+    {
+      identifier: z.string().describe("Username (without @) or numerical Twitter ID of the user to fetch")
+    },
+    async ({ identifier }) => {
+      try {
+        const data = await makeApexRequest(`/apex/user/${identifier}`, {}, bearerToken, apiUrl);
         return createToolResponse(data);
       } catch (error) {
         return handleToolError(error);
