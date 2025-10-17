@@ -1,0 +1,104 @@
+{
+  "$schema": "https://github.com/anthropics/mcpb/raw/main/dist/mcpb-manifest.schema.json",
+  "manifest_version": "0.2",
+  "name": "apex-mcp",
+  "display_name": "Apex X/Twitter Manager",
+  "version": "1.0.0",
+  "description": "Manage your X (Twitter) account with AI through Apex API",
+  "long_description": "A powerful MCP extension that provides complete X/Twitter management capabilities including tweeting, replying, searching, and generating AI-powered responses. Built using Apex social media infrastructure.",
+  "author": {
+    "name": "Apex MCP",
+    "email": "support@example.com"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "APEX_API_KEY": "${user_config.apex_api_key}",
+        "APEX_API_URL": "${user_config.apex_api_url}"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "get_tweet",
+      "description": "Get a tweet by its ID with full details"
+    },
+    {
+      "name": "search_tweets", 
+      "description": "Search for tweets with advanced filtering options"
+    },
+    {
+      "name": "generate_reply",
+      "description": "Generate AI-powered reply suggestions for text/images"
+    },
+    {
+      "name": "generate_reply_to_tweet",
+      "description": "Generate reply suggestion for a specific tweet"
+    },
+    {
+      "name": "post_tweet",
+      "description": "Post a new tweet with optional images"
+    },
+    {
+      "name": "post_reply_to_tweet", 
+      "description": "Post a reply to an existing tweet"
+    },
+    {
+      "name": "add_list_member",
+      "description": "Add a member to an X/Twitter list"
+    },
+    {
+      "name": "get_list_members",
+      "description": "Get members of a list with pagination support"
+    },
+    {
+      "name": "create_list",
+      "description": "Create a new X/Twitter list"
+    },
+    {
+      "name": "get_user_lists",
+      "description": "Get all lists owned by the authenticated user"
+    },
+    {
+      "name": "delete_list",
+      "description": "Delete an X/Twitter list"
+    },
+    {
+      "name": "get_list",
+      "description": "Get detailed information about a specific list"
+    },
+    {
+      "name": "update_list",
+      "description": "Update an existing list's properties"
+    }
+  ],
+  "keywords": ["twitter", "x", "social-media", "apex", "ai", "automation"],
+  "license": "MIT",
+  "user_config": {
+    "apex_api_key": {
+      "type": "string",
+      "title": "Apex API Key",
+      "description": "Your Apex API key for authentication. Get one at https://apexagents.ai",
+      "sensitive": true,
+      "required": true
+    },
+    "apex_api_url": {
+      "type": "string", 
+      "title": "Apex API URL",
+      "description": "The Apex API base URL provided with your API key",
+      "required": true,
+      "default": "https://api.apexagents.ai"
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  }
+}

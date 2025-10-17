@@ -9,11 +9,21 @@ Supported platforms:
 - X
 
 ## Functions:
-- get tweet
-- search tweets (including replies)
-- generate reply
-- post tweet
-- post reply
+### Tweet Management
+- get tweet - Get detailed information about a specific tweet
+- search tweets - Search tweets with advanced filtering (including replies)
+- generate reply - Generate AI-powered reply suggestions for text/images
+- post tweet - Post new tweets with optional images
+- post reply - Post replies to existing tweets
+
+### List Management
+- create list - Create new X/Twitter lists
+- get user lists - Retrieve all lists owned by the authenticated user
+- get list - Get detailed information about a specific list
+- get list members - Get members of a list with pagination support
+- add list member - Add users to X/Twitter lists
+- update list - Update existing list properties
+- delete list - Delete X/Twitter lists
 
 ## Example Usage
 
@@ -45,7 +55,38 @@ This searches for original tweets (not retweets) containing "bitcoin" and "treas
 
 Install with Smithery [here](https://smithery.ai/server/@xonack/apex-mcp).
 
+## Building MCPB Bundles
 
+Create installable MCPB bundles for Claude Desktop:
+
+### Prerequisites
+
+```bash
+# Install MCPB CLI globally
+npm install -g @anthropic-ai/mcpb
+```
+
+### Build Process
+
+```bash
+# Clone and setup
+git clone https://github.com/xonack/apex-mcp.git
+cd apex-mcp
+npm install
+
+# Build the bundle
+npm run mcpb:build
+```
+
+This creates `apex-mcp.mcpb` file that can be installed directly in Claude Desktop.
+
+### Installation
+
+1. Open Claude Desktop
+2. Go to Settings → Extensions
+3. Click "Install Extension" 
+4. Select the `apex-mcp.mcpb` file
+5. Configure your Apex API key and URL
 
 ## Manual Set Up
 
