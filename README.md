@@ -26,6 +26,11 @@ Supported platforms:
 - add list member - Add users to X/Twitter lists
 - update list - Update existing list properties
 - delete list - Delete X/Twitter lists
+### User Management
+- follow user - Follow a user on Twitter/X by their user ID
+- unfollow user - Unfollow a user on Twitter/X by their user ID
+- get user followers - Get a paginated list of a user's followers
+- get user following - Get a paginated list of users that a user is following
 
 ## Example Usage
 

@@ -439,5 +439,93 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
     }
   );
 
+  // Register the FollowUserTool
+  server.tool(
+    "follow_user",
+    "Follow a user on Twitter/X by their user ID.",
+    {
+      userId: z.string().describe("The Twitter ID of the user to follow")
+    },
+    async ({ userId }) => {
+      try {
+        const data = await makeApexRequest(`/twitter/user/${userId}/follow`, {
+          method: 'POST'
+        }, bearerToken, apiUrl);
+        return createToolResponse(data);
+      } catch (error) {
+        return handleToolError(error);
+      }
+    }
+  );
+
+  // Register the UnfollowUserTool
+  server.tool(
+    "unfollow_user",
+    "Unfollow a user on Twitter/X by their user ID.",
+    {
+      userId: z.string().describe("The Twitter ID of the user to unfollow")
+    },
+    async ({ userId }) => {
+      try {
+        const data = await makeApexRequest(`/twitter/user/${userId}/follow`, {
+          method: 'DELETE'
+        }, bearerToken, apiUrl);
+        return createToolResponse(data);
+      } catch (error) {
+        return handleToolError(error);
+      }
+    }
+  );
+
+  // Register the GetUserFollowersTool
+  server.tool(
+    "get_user_followers",
+    "Get a paginated list of a user's followers. Returns user objects with profile information.",
+    {
+      userId: z.string().describe("The Twitter ID of the user whose followers to fetch"),
+      cursor: z.string().optional().describe("Pagination cursor for next batch of results"),
+      maxResults: z.number().min(1).max(100).optional().describe("Maximum number of followers to return (1-100, default varies)")
+    },
+    async ({ userId, cursor, maxResults }) => {
+      try {
+        const queryParams: Record<string, any> = {};
+        if (cursor) queryParams.cursor = cursor;
+        if (maxResults) queryParams.maxResults = maxResults;
+        
+        const data = await makeApexRequest(`/twitter/user/${userId}/followers`, {
+          queryParams
+        }, bearerToken, apiUrl);
+        return createToolResponse(data);
+      } catch (error) {
+        return handleToolError(error);
+      }
+    }
+  );
+
+  // Register the GetUserFollowingTool
+  server.tool(
+    "get_user_following",
+    "Get a paginated list of users that a user is following. Returns user objects with profile information.",
+    {
+      userId: z.string().describe("The Twitter ID of the user whose following list to fetch"),
+      cursor: z.string().optional().describe("Pagination cursor for next batch of results"),
+      maxResults: z.number().min(1).max(100).optional().describe("Maximum number of users to return (1-100, default varies)")
+    },
+    async ({ userId, cursor, maxResults }) => {
+      try {
+        const queryParams: Record<string, any> = {};
+        if (cursor) queryParams.cursor = cursor;
+        if (maxResults) queryParams.maxResults = maxResults;
+        
+        const data = await makeApexRequest(`/twitter/user/${userId}/following`, {
+          queryParams
+        }, bearerToken, apiUrl);
+        return createToolResponse(data);
+      } catch (error) {
+        return handleToolError(error);
+      }
+    }
+  );
+
   return server;
 }
