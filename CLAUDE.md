@@ -62,6 +62,8 @@ Each tool in `server.ts` follows this pattern:
 
 ## Important Notes
 
+- **All files must be written in TypeScript (.ts) unless technologically impossible**
+- Use `tsx` for running TypeScript files during development
 - No linting or testing setup currently exists
 - The project uses ES modules (`"type": "module"` in package.json)
 - TypeScript compilation targets ES2022 with Node16 module resolution
