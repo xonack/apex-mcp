@@ -85,5 +85,3 @@ Add this configuration to your Claude Desktop config file:
 ```
 
 Open [Claude Desktop](https://claude.ai/download) to verify connection.
-
-[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/xonack-apex-mcp-badge.png)](https://mseep.ai/app/xonack-apex-mcp)
