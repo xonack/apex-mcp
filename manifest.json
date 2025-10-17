@@ -75,6 +75,26 @@
     {
       "name": "update_list",
       "description": "Update an existing list's properties"
+    },
+    {
+      "name": "follow_user",
+      "description": "Follow a user on Twitter/X by their user ID"
+    },
+    {
+      "name": "unfollow_user",
+      "description": "Unfollow a user on Twitter/X by their user ID"
+    },
+    {
+      "name": "get_user_followers",
+      "description": "Get a paginated list of a user's followers"
+    },
+    {
+      "name": "get_user_following",
+      "description": "Get a paginated list of users that a user is following"
+    },
+    {
+      "name": "get_user_details",
+      "description": "Get comprehensive user profile information by username or Twitter ID"
     }
   ],
   "keywords": ["twitter", "x", "social-media", "apex", "ai", "automation"],
