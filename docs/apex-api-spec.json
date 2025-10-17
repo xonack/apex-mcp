@@ -1,0 +1,2556 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/twitter/clients": {
+      "delete": {
+        "operationId": "TwitterController_clearAllApiClients",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "GCP": []
+          }
+        ],
+        "summary": "Clears all cached API clients from memory.",
+        "tags": [
+          "Twitter"
+        ]
+      }
+    },
+    "/twitter/user/{id}/follow": {
+      "post": {
+        "operationId": "TwitterController_follow",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The Twitter ID of the user to follow.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterUserNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to follow user"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Follow a user.",
+        "tags": [
+          "Twitter"
+        ]
+      },
+      "delete": {
+        "operationId": "TwitterController_unfollow",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The Twitter ID of the user to unfollow.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterUserNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to unfollow user"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Unfollow a user.",
+        "tags": [
+          "Twitter"
+        ]
+      }
+    },
+    "/twitter/user/{id}/followers": {
+      "get": {
+        "operationId": "TwitterController_getFollowers",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The Twitter ID of the user whose  followers are required.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The cursor to the batch of results to fetch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxResults",
+            "required": false,
+            "in": "query",
+            "description": "The maximum number of results to fetch. Only works when used with a cursor.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTwitterUsers"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get user's followers"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get a user's followers.",
+        "tags": [
+          "Twitter"
+        ]
+      }
+    },
+    "/twitter/user/{id}/following": {
+      "get": {
+        "operationId": "TwitterController_getFollowing",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The Twitter ID of the user whose  following are required.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The cursor to the batch of results to fetch. Only works when used with a cursor.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxResults",
+            "required": false,
+            "in": "query",
+            "description": "The maximum number of results to fetch.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTwitterUsers"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get user's following"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get a user's following.",
+        "tags": [
+          "Twitter"
+        ]
+      }
+    },
+    "/twitter/user/{userName}": {
+      "get": {
+        "operationId": "TwitterController_getUser",
+        "parameters": [
+          {
+            "name": "userName",
+            "required": true,
+            "in": "path",
+            "description": "The username of the user to fetch.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterUser"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterUserNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get user's details"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get a user's details.",
+        "tags": [
+          "Twitter"
+        ]
+      }
+    },
+    "/apex/list/{listId}/member": {
+      "post": {
+        "operationId": "ApexController_addListMembers",
+        "parameters": [
+          {
+            "name": "listId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddListMemberBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "404": {
+            "description": "List/user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/TwitterListNotFoundExceptionResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TwitterUserNotFoundExceptionResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to add member"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Add members to a list.",
+        "tags": [
+          "Apex"
+        ]
+      },
+      "get": {
+        "operationId": "ApexController_getListMembers",
+        "parameters": [
+          {
+            "name": "listId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The cursor to the batch of results to fetch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxResults",
+            "required": false,
+            "in": "query",
+            "description": "The maximum results to include in one response. Default is 100.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTwitterUsers"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "List not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterListNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get list members"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get list members.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/list": {
+      "post": {
+        "operationId": "ApexController_createList",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateListBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create list"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Create a new list.",
+        "tags": [
+          "Apex"
+        ]
+      },
+      "get": {
+        "operationId": "ApexController_getUserLists",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The cursor to the batch of results to fetch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxResults",
+            "required": false,
+            "in": "query",
+            "description": "The maximum results to include in one response. Default is 100.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTwitterLists"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get user lists"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get user's own lists.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/list/{listId}": {
+      "delete": {
+        "operationId": "ApexController_deleteList",
+        "parameters": [
+          {
+            "name": "listId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "List not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterListNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to delete list"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a list.",
+        "tags": [
+          "Apex"
+        ]
+      },
+      "get": {
+        "operationId": "ApexController_getList",
+        "parameters": [
+          {
+            "name": "listId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "List not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterListNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get list"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get a specific list by ID.",
+        "tags": [
+          "Apex"
+        ]
+      },
+      "put": {
+        "operationId": "ApexController_updateList",
+        "parameters": [
+          {
+            "name": "listId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateListBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "List not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterListNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to update list"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Update an existing list.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/me": {
+      "get": {
+        "operationId": "ApexController_getAuthorizedUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizedUser"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Check authorization status by authorized user's info.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/conversation": {
+      "get": {
+        "operationId": "ApexController_getConversation",
+        "parameters": [
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The cursor to the batch of results to fetch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxResults",
+            "required": false,
+            "in": "query",
+            "description": "The maximum number of results to fetch.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          },
+          {
+            "name": "withId",
+            "required": true,
+            "in": "query",
+            "description": "The Twitter ID of the user in the target conversation.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTwitterDMs"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a conversation with a Twitter user.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/list/{listId}/tweet": {
+      "get": {
+        "operationId": "ApexController_getListTweets",
+        "parameters": [
+          {
+            "name": "listId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The cursor to the batch of results to fetch.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxResults",
+            "required": false,
+            "in": "query",
+            "description": "The maximum results to include in one response. Default is 100.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sinceId",
+            "required": false,
+            "in": "query",
+            "description": "Return posts that are more recent than the post with the given ID.\nNote: This parameter is accepted but not used by Twitter API v2 for list tweets.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "untilId",
+            "required": false,
+            "in": "query",
+            "description": "Return posts that are older than the post with the given ID.\nNote: This parameter is accepted but not used by Twitter API v2 for list tweets.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTwitterTweets"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "List not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterListNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get list tweets"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get tweets from a list.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/reply": {
+      "get": {
+        "operationId": "ApexController_getReply",
+        "parameters": [
+          {
+            "name": "images",
+            "required": false,
+            "in": "query",
+            "description": "The list of URL to images to which reply is to be generated.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "text",
+            "required": true,
+            "in": "query",
+            "description": "The text to which reply is to be generated.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneratedReply"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tweet not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterTweetNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "User out of daily balance/subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCreditsExhaustedExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to generate unique reply"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Generate a suggested reply to an arbitrary input.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/tweet/{id}/reply": {
+      "get": {
+        "operationId": "ApexController_getReplyToTweet",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the tweet to which reply is to be generated.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneratedReply"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tweet not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterTweetNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "User out of daily balance/subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCreditsExhaustedExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to generate unique reply"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Generate a suggested reply to a tweet.",
+        "tags": [
+          "Apex"
+        ]
+      },
+      "post": {
+        "operationId": "ApexController_postReply",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the tweet to which reply is to be posted.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostReplyBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostedTweet"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tweet not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterTweetNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "User out of daily balance/subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCreditsExhaustedExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to post reply"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Post a reply to a tweet.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/tweet/{id}/details": {
+      "get": {
+        "operationId": "ApexController_getTweet",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the tweet whose details are to be fetched.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterTweet"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tweet not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterTweetNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "User out of daily balance/subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCreditsExhaustedExceptionResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get the details of a single tweet.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/user/{id}": {
+      "get": {
+        "operationId": "ApexController_getUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The Twitter ID/username of the target user.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterUser"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwitterUserNotFoundExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get user"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get details of a user.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/user/{id}/timeline": {
+      "get": {
+        "operationId": "ApexController_getUserTimeline",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The Twitter ID of the target user.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "required": false,
+            "in": "query",
+            "description": "The number of results to fetch.\nOnly works with a valid cursor.\nFirst batch always contains a maximum of 100 results.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The cursor to the batch of results to fetch.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTwitterTweets"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get user"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get a user's timeline",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/tweet": {
+      "post": {
+        "operationId": "ApexController_postTweet",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostTweetBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostedTweet"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "User out of daily balance/subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCreditsExhaustedExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to post tweet"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Post a tweet.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/list/{listId}/member/{userId}": {
+      "delete": {
+        "operationId": "ApexController_removeListMember",
+        "parameters": [
+          {
+            "name": "listId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "List/user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/TwitterListNotFoundExceptionResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TwitterUserNotFoundExceptionResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to remove list member"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Remove a member from a list.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/tweet/search": {
+      "get": {
+        "operationId": "ApexController_searchTweets",
+        "parameters": [
+          {
+            "name": "count",
+            "required": false,
+            "in": "query",
+            "description": "The number of tweets to fetch.\n\nWhen no count is provided, default of 10 is used.",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The pagination cursor for next batch of results.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "The ending date for the search range.",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeWords",
+            "required": false,
+            "in": "query",
+            "description": "Words to exclude from search.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "fromUsers",
+            "required": false,
+            "in": "query",
+            "description": "The list of users to search from (no need to include @).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "hashtags",
+            "required": false,
+            "in": "query",
+            "description": "The list of hashtags to search for.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "includePhrase",
+            "required": false,
+            "in": "query",
+            "description": "The phrase to search for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeWords",
+            "required": false,
+            "in": "query",
+            "description": "Words to include in search.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "language",
+            "required": false,
+            "in": "query",
+            "description": "The language of the tweets to search for (ISO 639-1).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "list",
+            "required": false,
+            "in": "query",
+            "description": "The ID of the list to search in.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxId",
+            "required": false,
+            "in": "query",
+            "description": "The max ID of the tweet to search for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mentions",
+            "required": false,
+            "in": "query",
+            "description": "The list of mentioned users to search for.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "minLikes",
+            "required": false,
+            "in": "query",
+            "description": "The minimum number of likes for a tweet.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minReplies",
+            "required": false,
+            "in": "query",
+            "description": "The minimum number of replies for a tweet.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minRetweets",
+            "required": false,
+            "in": "query",
+            "description": "The minimum number of retweets for a tweet.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "onlyLinks",
+            "required": false,
+            "in": "query",
+            "description": "Whether to search only for tweets with links.",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "onlyOriginal",
+            "required": false,
+            "in": "query",
+            "description": "Whether to search only for original tweets.",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "onlyReplies",
+            "required": false,
+            "in": "query",
+            "description": "Whether to search only for replies.",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "onlyText",
+            "required": false,
+            "in": "query",
+            "description": "Whether to search only for text tweets.",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "optionalWords",
+            "required": false,
+            "in": "query",
+            "description": "Optional words to include in search.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "quoted",
+            "required": false,
+            "in": "query",
+            "description": "The ID of the quoted tweet to search for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sinceId",
+            "required": false,
+            "in": "query",
+            "description": "The since ID of the tweet to search for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "The starting date for the search range.",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "toUsers",
+            "required": false,
+            "in": "query",
+            "description": "The list of users to whom the tweets must be addressed to (no need to include @).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "top",
+            "required": false,
+            "in": "query",
+            "description": "Whether to search for top tweets.",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTwitterTweets"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "User out of daily balance/subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCreditsExhaustedExceptionResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to search for tweets"
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Search for tweets.",
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/apex/message": {
+      "post": {
+        "operationId": "ApexController_sendMessage",
+        "parameters": [
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "The Twitter ID of the user to whom the message is to be sent.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "tags": [
+          "Apex"
+        ]
+      }
+    },
+    "/reply/{id}/approve": {
+      "post": {
+        "operationId": "ReplyController_approveReply",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the target reply.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyApprovalBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApproveReplyResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Reply not found/invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostNotFoundException"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Reply alread approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostStatusAlreadyConfirmedException"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Out of daily credits/over daily automated reply limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/DailyCreditsExhaustedExceptionResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/OverDailyAutomatedReplyLimitExceptionResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Approve a reply.",
+        "tags": [
+          "Reply"
+        ]
+      }
+    },
+    "/reply/expiration": {
+      "post": {
+        "operationId": "ReplyController_expirePosts",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "GCP": []
+          },
+          {
+            "ADMIN": []
+          }
+        ],
+        "tags": [
+          "Reply"
+        ]
+      }
+    },
+    "/reply": {
+      "get": {
+        "operationId": "ReplyController_getPendingReplies",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApprovalReply"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Get your replies that are pending for approval.",
+        "tags": [
+          "Reply"
+        ]
+      }
+    },
+    "/reply/{id}/reject": {
+      "post": {
+        "operationId": "ReplyController_rejectReply",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the target reply.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyRejectionBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "404": {
+            "description": "Reply not found/invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostNotFoundException"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "API_USER": []
+          }
+        ],
+        "summary": "Reject a reply. Can also be used to update feedback on an already rejected reply.",
+        "tags": [
+          "Reply"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Apex API",
+    "description": "The Apex API documentation",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "ADMIN": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "API_USER": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "DELEGATED_APP_USER": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "DELEGATED_SUPER_USER": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "GCP": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      },
+      "SESSION": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "TwitterUserNotFoundExceptionResponse": {
+        "type": "object",
+        "properties": {
+          "cause": {
+            "type": "object",
+            "example": "TWITTER_USER_NOT_FOUND"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "message"
+        ]
+      },
+      "TwitterUser": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "description": "The date when the user's account was created."
+          },
+          "description": {
+            "type": "string",
+            "description": "The profile description."
+          },
+          "followersCount": {
+            "type": "number",
+            "description": "The total number of followers of the user."
+          },
+          "followingsCount": {
+            "type": "number",
+            "description": "The total number of users followed by the user."
+          },
+          "fullName": {
+            "type": "string",
+            "description": "The full name of the user."
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the user."
+          },
+          "isVerified": {
+            "type": "boolean",
+            "description": "Whether the user is verified or not."
+          },
+          "likeCount": {
+            "type": "number",
+            "description": "The total number of tweets liked by the user."
+          },
+          "location": {
+            "type": "string",
+            "description": "The user's general location, if any."
+          },
+          "pinnedTweet": {
+            "type": "string",
+            "description": "The ID of the tweet pinned on the user's profile."
+          },
+          "profileBanner": {
+            "type": "string",
+            "description": "The URL to the user's profile banner."
+          },
+          "profileImage": {
+            "type": "string",
+            "description": "The URL to the user's profile image."
+          },
+          "statusesCount": {
+            "type": "number",
+            "description": "The total number of posts made by the user."
+          },
+          "userName": {
+            "type": "string",
+            "description": "The user's username."
+          }
+        },
+        "required": [
+          "createdAt",
+          "followersCount",
+          "followingsCount",
+          "fullName",
+          "id",
+          "isVerified",
+          "likeCount",
+          "profileImage",
+          "statusesCount",
+          "userName"
+        ]
+      },
+      "PaginatedTwitterUsers": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "The cursor to the next batch of data."
+          },
+          "items": {
+            "description": "The users in the current batch.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TwitterUser"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "TwitterListNotFoundExceptionResponse": {
+        "type": "object",
+        "properties": {
+          "cause": {
+            "type": "object",
+            "example": "TWITTER_LIST_NOT_FOUND"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "message"
+        ]
+      },
+      "AddListMemberBody": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "ID of user to add to the list."
+          }
+        },
+        "required": [
+          "userId"
+        ]
+      },
+      "CreateListBody": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "The description of the list.",
+            "maxLength": 100
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the list.",
+            "minLength": 1,
+            "maxLength": 25
+          },
+          "private": {
+            "type": "boolean",
+            "description": "Whether the list should be private. Default is false (public)."
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "AuthorizedUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "The email of the user."
+          },
+          "name": {
+            "type": "string",
+            "description": "The full name of the user."
+          },
+          "userName": {
+            "type": "string",
+            "description": "The username of the user's Twitter account."
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "userName"
+        ]
+      },
+      "TwitterDMEvent": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string",
+            "description": "The ID of the associated conversation."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "The time when the DM event was created."
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the DM event."
+          },
+          "senderId": {
+            "type": "string",
+            "description": "The Twitter ID of the participant who sent the event."
+          },
+          "text": {
+            "type": "string",
+            "description": "The text content of the DM message."
+          }
+        },
+        "required": [
+          "conversationId",
+          "createdAt",
+          "id",
+          "senderId",
+          "text"
+        ]
+      },
+      "PaginatedTwitterDMs": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "The cursor to the next batch of data."
+          },
+          "items": {
+            "description": "The DM events in the current batch.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TwitterDMEvent"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "TwitterList": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string",
+            "description": "The date when the list was created."
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the list."
+          },
+          "followerCount": {
+            "type": "number",
+            "description": "The total number of followers of the list."
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the list."
+          },
+          "memberCount": {
+            "type": "number",
+            "description": "The total number of members in the list."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the list."
+          },
+          "owner": {
+            "description": "The details of the user who owns this list.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TwitterUser"
+              }
+            ]
+          },
+          "private": {
+            "type": "boolean",
+            "description": "Whether the list is private or not."
+          }
+        },
+        "required": [
+          "createdAt",
+          "followerCount",
+          "id",
+          "memberCount",
+          "name",
+          "owner",
+          "private"
+        ]
+      },
+      "TwitterTweetEntities": {
+        "type": "object",
+        "properties": {
+          "hashtags": {
+            "description": "The list of hashtags mentioned in the tweet.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mentionedUsers": {
+            "description": "The list of IDs of users mentioned in the tweet.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "urls": {
+            "description": "The list of urls mentioned in the tweet.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "hashtags",
+          "mentionedUsers",
+          "urls"
+        ]
+      },
+      "TwitterTweetMedia": {
+        "type": "object",
+        "properties": {
+          "thumbnailUrl": {
+            "type": "string",
+            "description": "The thumbnail URL for the video content of the tweet."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of media.",
+            "enum": [
+              "PHOTO",
+              "VIDEO",
+              "GIF"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "description": "The direct URL to the media."
+          }
+        },
+        "required": [
+          "type",
+          "url"
+        ]
+      },
+      "TwitterTweet": {
+        "type": "object",
+        "properties": {
+          "bookmarkCount": {
+            "type": "number",
+            "description": "The total number of bookmarks of the tweet."
+          },
+          "conversationId": {
+            "type": "string",
+            "description": "The ID of the thread of which the tweet is a part."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "The date when the tweet was created."
+          },
+          "entities": {
+            "description": "Additional tweet entities like mentions, etc.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TwitterTweetEntities"
+              }
+            ]
+          },
+          "fullText": {
+            "type": "string",
+            "description": "The full text content of the tweet."
+          },
+          "id": {
+            "type": "string",
+            "description": "The ID of the tweet."
+          },
+          "lang": {
+            "type": "string",
+            "description": "The language of the tweet."
+          },
+          "likeCount": {
+            "type": "number",
+            "description": "The total number of likes of the tweet."
+          },
+          "media": {
+            "description": "The media content of the tweet, if any.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TwitterTweetMedia"
+            }
+          },
+          "quoteCount": {
+            "type": "number",
+            "description": "The total number of quotes of the tweet."
+          },
+          "quoted": {
+            "description": "The original tweet which was quoted in this tweet, if any.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TwitterTweet"
+              }
+            ]
+          },
+          "replyCount": {
+            "type": "number",
+            "description": "The total number of replies to the tweet."
+          },
+          "replyTo": {
+            "type": "string",
+            "description": "The ID of the tweet to which this tweet was a reply, if any."
+          },
+          "retweetCount": {
+            "type": "number",
+            "description": "The total number of replies to this tweet."
+          },
+          "retweetedTweet": {
+            "description": "The ID of original tweet which was retweeted in this tweet, if any.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TwitterTweet"
+              }
+            ]
+          },
+          "tweetBy": {
+            "description": "The details of the user who posted this tweet.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TwitterUser"
+              }
+            ]
+          },
+          "url": {
+            "type": "string",
+            "description": "The URL to this tweet."
+          },
+          "viewCount": {
+            "type": "number",
+            "description": "The total number of views of this tweet."
+          }
+        },
+        "required": [
+          "bookmarkCount",
+          "conversationId",
+          "createdAt",
+          "entities",
+          "fullText",
+          "id",
+          "lang",
+          "likeCount",
+          "quoteCount",
+          "replyCount",
+          "retweetCount",
+          "tweetBy",
+          "url",
+          "viewCount"
+        ]
+      },
+      "PaginatedTwitterTweets": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "The cursor to the next batch of data."
+          },
+          "items": {
+            "description": "The tweets in the current batch.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TwitterTweet"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "GeneratedReply": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The generated reply text."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "TwitterTweetNotFoundExceptionResponse": {
+        "type": "object",
+        "properties": {
+          "cause": {
+            "type": "object",
+            "example": "TWITTER_TWEET_NOT_FOUND"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "message"
+        ]
+      },
+      "DailyCreditsExhaustedExceptionResponse": {
+        "type": "object",
+        "properties": {
+          "cause": {
+            "type": "object",
+            "example": "DAILY_CREDITS_EXHAUSTED"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "message"
+        ]
+      },
+      "PaginatedTwitterLists": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "The cursor to the next batch of data."
+          },
+          "items": {
+            "description": "The lists in the current batch.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TwitterList"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
+      "PostReplyBody": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text to post as reply."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "PostedTweet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the posted tweet."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "PostTweetBody": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text to post as tweet."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "SendMessageBody": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text message to send."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "UpdateListBody": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "The new description of the list.",
+            "maxLength": 100
+          },
+          "name": {
+            "type": "string",
+            "description": "The new name of the list.",
+            "minLength": 1,
+            "maxLength": 25
+          },
+          "private": {
+            "type": "boolean",
+            "description": "Whether the list should be private."
+          }
+        }
+      },
+      "OverDailyAutomatedReplyLimitExceptionResponse": {
+        "type": "object",
+        "properties": {
+          "cause": {
+            "type": "object",
+            "example": "OVER_DAILY_AUTOMATED_REPLY_LIMIT"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "message"
+        ]
+      },
+      "ReplyApprovalBody": {
+        "type": "object",
+        "properties": {
+          "editedReplyText": {
+            "type": "string",
+            "description": "The edited reply to use. Overrides the suggested reply.",
+            "minLength": 1
+          }
+        }
+      },
+      "ApproveReplyResponse": {
+        "type": "object",
+        "properties": {
+          "replyTwitterId": {
+            "type": "string",
+            "description": "The Twitter ID of the posted reply."
+          }
+        }
+      },
+      "PostNotFoundException": {
+        "type": "object",
+        "properties": {
+          "cause": {
+            "type": "object",
+            "example": "POST_NOT_FOUND"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "message"
+        ]
+      },
+      "PostStatusAlreadyConfirmedException": {
+        "type": "object",
+        "properties": {
+          "cause": {
+            "type": "object",
+            "example": "POST_STATUS_ALREAD_CONFIRMED"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "message"
+        ]
+      },
+      "ApprovalReply": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the record."
+          },
+          "originalTweet": {
+            "description": "The details of the original tweet which triggered the reply.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TwitterTweet"
+              }
+            ]
+          },
+          "source": {
+            "type": "object",
+            "description": "The details of the source of approval reply."
+          },
+          "suggestedReplyText": {
+            "type": "string",
+            "description": "The suggested reply text."
+          },
+          "userName": {
+            "type": "string",
+            "description": "The username of the Twitter user on whose behalf reply is to be posted."
+          }
+        },
+        "required": [
+          "id",
+          "originalTweet",
+          "suggestedReplyText",
+          "userName"
+        ]
+      },
+      "ReplyRejectionBody": {
+        "type": "object",
+        "properties": {
+          "feedback": {
+            "type": "string",
+            "description": "Describe why the reply was rejected.",
+            "minLength": 5
+          }
+        }
+      }
+    }
+  }
+}
