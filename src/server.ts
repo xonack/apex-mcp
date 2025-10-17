@@ -216,7 +216,7 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
     • Content exclusion: Use excludeWords to filter out unwanted topics`,
     {
       count: z.number().optional().describe("Number of tweets to return. Recommended: 50 for comprehensive results, 20 for quick scans. Max practical limit ~50."),
-      cursor: z.string().optional().describe("Pagination cursor for next batch of results. Use the cursor from previous response to get more results."),
+      cursor: z.string().optional().describe("Pagination cursor for next batch of results. Use the cursor value returned in the previous response to get the next page of data"),
       endDate: z.string().optional().describe("End date for search range. Format: YYYY-MM-DD (e.g., '2025-07-30')"),
       excludeWords: z.array(z.string()).optional().describe("Words to exclude from results. Format: ['word1', 'word2']. Useful for filtering out unwanted topics like ['crypto', 'spam']"),
       fromUsers: z.array(z.string()).optional().describe("Search tweets FROM these users. Format: ['username'] WITHOUT @ symbol. Example: ['elonmusk', 'OpenAI'] NOT ['@elonmusk', '@OpenAI']"),
@@ -295,7 +295,7 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
     "Get members of a list with pagination support. Returns user objects for each member.",
     {
       listId: z.string().describe("ID of the list"),
-      cursor: z.string().optional().describe("Pagination cursor from previous response"),
+      cursor: z.string().optional().describe("Pagination cursor for next batch of results. Use the cursor value returned in the previous response to get the next page of data"),
       maxResults: z.number().min(1).max(200).optional()
         .describe("Maximum results per page (1-200, default: 100)")
     },
@@ -348,7 +348,7 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
     "get_user_lists",
     "Get all lists owned by the authenticated user. Returns list objects with metadata.",
     {
-      cursor: z.string().optional().describe("Pagination cursor from previous response"),
+      cursor: z.string().optional().describe("Pagination cursor for next batch of results. Use the cursor value returned in the previous response to get the next page of data"),
       maxResults: z.number().min(1).max(200).optional()
         .describe("Maximum results per page (1-200, default: 100)")
     },
@@ -483,7 +483,7 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
     "Get a paginated list of a user's followers. Returns user objects with profile information. If you only have a username, use get_user_details first to get the TWID.",
     {
       userId: z.string().describe("The numerical Twitter ID (TWID) of the user whose followers to fetch"),
-      cursor: z.string().optional().describe("Pagination cursor for next batch of results"),
+      cursor: z.string().optional().describe("Pagination cursor for next batch of results. Use the cursor value returned in the previous response to get the next page of data"),
       maxResults: z.number().min(1).max(100).optional().describe("Maximum number of followers to return (1-100, default varies)")
     },
     async ({ userId, cursor, maxResults }) => {
@@ -508,7 +508,7 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
     "Get a paginated list of users that a user is following. Returns user objects with profile information. If you only have a username, use get_user_details first to get the TWID.",
     {
       userId: z.string().describe("The numerical Twitter ID (TWID) of the user whose following list to fetch"),
-      cursor: z.string().optional().describe("Pagination cursor for next batch of results"),
+      cursor: z.string().optional().describe("Pagination cursor for next batch of results. Use the cursor value returned in the previous response to get the next page of data"),
       maxResults: z.number().min(1).max(100).optional().describe("Maximum number of users to return (1-100, default varies)")
     },
     async ({ userId, cursor, maxResults }) => {
