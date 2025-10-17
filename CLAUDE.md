@@ -4,6 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
+### Essential First Step
+**ALWAYS run this at the beginning of any new session:**
+```bash
+npm run extract-api-docs
+```
+This extracts the latest Apex API documentation to `docs/apex-api-spec.json` for reference during development. The API may change frequently, so fresh documentation is critical for accurate development.
+
 ### Build the project
 ```bash
 npm run build
@@ -59,6 +66,27 @@ Each tool in `server.ts` follows this pattern:
 2. Calls `makeApexRequest` helper with appropriate endpoint and parameters
 3. Returns formatted response using `createToolResponse`
 4. Handles errors with `handleToolError`
+
+## API Documentation Reference
+
+The complete Apex API specification is available at `docs/apex-api-spec.json` after running the extraction tool. This file contains:
+- All available endpoints (currently 24)
+- Request/response schemas  
+- Parameter definitions
+- Authentication requirements
+
+**Key endpoints currently implemented in the MCP server:**
+- `/apex/tweet/search` - Search tweets with structured parameters
+- `/apex/tweet/{id}/details` - Get tweet details
+- `/apex/tweet/{id}/reply` - Generate/post replies
+- `/apex/tweet` - Post tweets
+- `/apex/list/*` - List management operations
+
+**Reference this documentation when:**
+- Adding new MCP tools
+- Understanding parameter structures
+- Implementing new API endpoints
+- Debugging API responses
 
 ## Important Notes
 
