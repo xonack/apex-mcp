@@ -15,6 +15,26 @@ Supported platforms:
 - post tweet
 - post reply
 
+## Example Usage
+
+### Search Tweets
+The search tool uses structured parameters (no `query` parameter). Here's an example request:
+
+```json
+{
+  "count": 20,
+  "minLikes": 100,
+  "includeWords": [
+    "bitcoin",
+    "treasury"
+  ],
+  "startDate": "2025-06-16",
+  "onlyOriginal": true
+}
+```
+
+This searches for original tweets (not retweets) containing "bitcoin" and "treasury" with at least 100 likes since June 16, 2025.
+
 ## Apex Set Up
 
 1. Create an account at [Apex](https://apexagents.ai).

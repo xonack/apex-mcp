@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Comprehensive X/Twitter management MCP server with list management, tweeting, searching, and AI-powered replies via Apex API",
   "type": "module",
-  "module": "./src/index.ts",
+  "module": "./src/smithery.ts",
   "bin": {
     "apex-mcp-server": "./dist/index.js"
   },
@@ -12,12 +12,13 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc && node -e \"import fs from 'fs'; const path = './dist/index.js'; let content = fs.readFileSync(path, 'utf8'); fs.writeFileSync(path, '#!/usr/bin/env node\\n' + content); fs.chmodSync(path, 0o755);\"",
+    "build": "tsc && node --input-type=module -e \"import fs from 'fs'; const path = './dist/index.js'; let content = fs.readFileSync(path, 'utf8'); fs.writeFileSync(path, '#!/usr/bin/env node\\n' + content); fs.chmodSync(path, 0o755);\"",
     "watch": "tsc --watch",
     "dev": "tsx src/index.ts",
     "dev:stdio": "MCP_TRANSPORT=stdio tsx src/index.ts",
     "start": "node dist/index.js",
     "start:stdio": "MCP_TRANSPORT=stdio node dist/index.js",
+    "extract-api-docs": "tsx utils/extract-api-docs.ts",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^20.11.30",
+    "puppeteer": "^23.10.4",
     "tsx": "^4.7.1",
     "typescript": "^5.4.5"
   },
