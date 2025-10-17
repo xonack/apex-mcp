@@ -41,14 +41,29 @@ npm start
 npm run start:stdio
 ```
 
+### MCPB Bundle Creation
+```bash
+# Build MCPB bundle for Claude Desktop
+npm run mcpb:build
+
+# Or pack existing build
+npm run mcpb:pack
+```
+Creates `apex-mcp.mcpb` file for direct installation in Claude Desktop extensions.
+
 ## Architecture
 
-This is a Model Context Protocol (MCP) server that integrates with the Apex API to provide Twitter/X functionality. The codebase has three entry points for different deployment scenarios:
+This is a Model Context Protocol (MCP) server that integrates with the Apex API to provide Twitter/X functionality. The codebase supports multiple deployment scenarios:
 
 ### Entry Points
 1. **src/index.ts** - Main entry point that supports both STDIO (for Claude Desktop) and HTTP (for web deployment) transports
 2. **src/smithery.ts** - Smithery-compatible export for deployment on the Smithery platform
 3. **src/server.ts** - Core MCP server factory that creates the server instance with all tool implementations
+
+### Deployment Options
+- **MCPB Bundles**: Create `.mcpb` files for direct Claude Desktop installation
+- **Smithery Cloud**: Deploy to Smithery marketplace for cloud-based access
+- **Manual Setup**: Direct npm installation and configuration
 
 ### Transport Modes
 - **STDIO Mode**: Used by Claude Desktop for direct communication (set `MCP_TRANSPORT=stdio`)
@@ -87,6 +102,50 @@ The complete Apex API specification is available at `docs/apex-api-spec.json` af
 - Understanding parameter structures
 - Implementing new API endpoints
 - Debugging API responses
+
+## Tool Synchronization Requirements
+
+**CRITICAL: Before ANY commit, verify tool synchronization across all files:**
+
+### Pre-Commit Validation Checklist
+
+1. **Extract tools from server.ts** (source of truth):
+   ```bash
+   grep -n "server\.tool(" src/server.ts | grep -o '"[^"]*"' | head -n 1
+   ```
+
+2. **Verify manifest.json tools array matches exactly**:
+   - All tool names must match server.ts implementations
+   - All descriptions should be concise and accurate
+   - Count must match: currently 13 tools
+
+3. **Update README.md Functions section**:
+   - Group tools logically (Tweet Management, List Management)
+   - Include brief description for each tool
+   - Must include all 13 tools from server.ts
+
+4. **Files requiring synchronization**:
+   - `src/server.ts` - Source of truth (actual implementations)
+   - `manifest.json` - MCPB bundle tool definitions (13 tools)
+   - `README.md` - User documentation functions list (13 tools)
+
+### Validation Commands
+
+```bash
+# Count tools in server.ts
+grep -c "server\.tool(" src/server.ts
+
+# Count tools in manifest.json (tools array only)
+jq '.tools | length' manifest.json
+
+# Extract tool names from server.ts
+grep -A1 "server\.tool(" src/server.ts | grep '"' | cut -d'"' -f2
+
+# Extract tool names from manifest.json
+jq -r '.tools[].name' manifest.json
+```
+
+**If counts don't match, synchronization is REQUIRED before commit.**
 
 ## Important Notes
 
