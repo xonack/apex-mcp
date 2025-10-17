@@ -30,8 +30,8 @@ Supported platforms:
 - get user details - Get comprehensive user profile information by username or Twitter ID (includes TWID, follower counts, verification status, profile details)
 - follow user - Follow a user on Twitter/X by their numerical Twitter ID (TWID)
 - unfollow user - Unfollow a user on Twitter/X by their numerical Twitter ID (TWID)
-- get user followers - Get a paginated list of a user's followers
-- get user following - Get a paginated list of users that a user is following
+- get user followers - Get a paginated list of a user's followers by numerical Twitter ID (TWID)
+- get user following - Get a paginated list of users that a user is following by numerical Twitter ID (TWID)
 
 ## Example Usage
 

@@ -480,9 +480,9 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
   // Register the GetUserFollowersTool
   server.tool(
     "get_user_followers",
-    "Get a paginated list of a user's followers. Returns user objects with profile information.",
+    "Get a paginated list of a user's followers. Returns user objects with profile information. If you only have a username, use get_user_details first to get the TWID.",
     {
-      userId: z.string().describe("The Twitter ID of the user whose followers to fetch"),
+      userId: z.string().describe("The numerical Twitter ID (TWID) of the user whose followers to fetch"),
       cursor: z.string().optional().describe("Pagination cursor for next batch of results"),
       maxResults: z.number().min(1).max(100).optional().describe("Maximum number of followers to return (1-100, default varies)")
     },
@@ -505,9 +505,9 @@ export function createMCPServerInstance(bearerToken: string, apiUrl: string) {
   // Register the GetUserFollowingTool
   server.tool(
     "get_user_following",
-    "Get a paginated list of users that a user is following. Returns user objects with profile information.",
+    "Get a paginated list of users that a user is following. Returns user objects with profile information. If you only have a username, use get_user_details first to get the TWID.",
     {
-      userId: z.string().describe("The Twitter ID of the user whose following list to fetch"),
+      userId: z.string().describe("The numerical Twitter ID (TWID) of the user whose following list to fetch"),
       cursor: z.string().optional().describe("Pagination cursor for next batch of results"),
       maxResults: z.number().min(1).max(100).optional().describe("Maximum number of users to return (1-100, default varies)")
     },
