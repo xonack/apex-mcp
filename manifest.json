@@ -2,7 +2,7 @@
   "$schema": "https://github.com/anthropics/mcpb/raw/main/dist/mcpb-manifest.schema.json",
   "manifest_version": "0.2",
   "name": "apex-mcp",
-  "display_name": "Apex X/Twitter Manager",
+  "display_name": "Apex X (Twitter) Manager",
   "version": "1.0.0",
   "description": "Manage your X (Twitter) account with AI through Apex API",
   "long_description": "A powerful MCP extension that provides complete X/Twitter management capabilities including tweeting, replying, searching, and generating AI-powered responses. Built using Apex social media infrastructure.",
