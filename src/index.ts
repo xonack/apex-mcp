@@ -31,7 +31,7 @@ async function setupHTTPMode() {
   const port = parseInt(process.env.PORT || '3000');
   const host = process.env.HOST || '0.0.0.0';
   
-  console.log(`🌐 Starting Express server on ${host}:${port}`);
+  console.error(`🌐 Starting Express server on ${host}:${port}`);
   
   const app = express();
   app.use(express.json());
@@ -55,8 +55,8 @@ async function setupHTTPMode() {
   });
   
   app.listen(port, host, () => {
-    console.log(`📡 MCP Server listening on http://${host}:${port}/mcp`);
-    console.log(`🚀 Apex MCP Server started with HTTP transport`);
+    console.error(`📡 MCP Server listening on http://${host}:${port}/mcp`);
+    console.error(`🚀 Apex MCP Server started with HTTP transport`);
   });
 }
 
