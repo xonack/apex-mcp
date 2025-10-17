@@ -50,7 +50,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: xonack/apex-frontend
-          token: ${{ secrets.NEXTJS_REPO_TOKEN }}
+          token: ${{ secrets.FRONTEND_REPO_TOKEN }}
           path: apex-frontend
           ref: master
 
